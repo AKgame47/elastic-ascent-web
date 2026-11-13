@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#091522"><title>Elastic Ascent - Clay Update</title><link rel="icon" href="7-index.icon.png"><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091522;color:#edf5f1;font-family:Arial,sans-serif;overscroll-behavior:none}body{display:flex;justify-content:center;align-items:center}#canvas{display:block;width:min(100vw,56.25dvh);height:min(177.7778vw,100dvh);outline:none;touch-action:none}#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#091522;z-index:2;text-align:center;padding:24px}.loop{width:52px;height:84px;border:11px solid #bcff6a;border-radius:32px;animation:stretch 1s ease-in-out infinite alternate}h1{font-size:23px;font-weight:500;letter-spacing:1px;margin:34px 0 12px}p{font-size:14px;color:#7f9aab;line-height:1.6;margin:0}#retry{margin-top:24px;background:#bcff6a;border:0;border-radius:12px;padding:16px 30px;color:#091522;font-size:16px;cursor:pointer;display:none}@keyframes stretch{to{transform:scale(.85,1.12)}}
+</style></head><body><canvas id="canvas" width="540" height="960" tabindex="0" aria-label="Elastic Ascent. Pull down and release to launch up.">Your browser needs WebGL 2 to play.</canvas><div id="loading"><div class="loop"></div><h1>ELASTIC ASCENT</h1><p id="status">Loading the shaft...<br>First load is about 9 MB.</p><button id="retry" onclick="location.reload()">Try again</button></div><script src="2-index.js"></script><script>
+const statusNode=document.getElementById('status');
+const engine=new Engine({canvas:document.getElementById('canvas'),canvasResizePolicy:0,executable:'3-index',mainPack:'1-clay.pck',fileSizes:{'index.pck':113608,'index.wasm':38034280},focusCanvas:false,ensureCrossOriginIsolationHeaders:false,emscriptenPoolSize:0,godotPoolSize:0});
+const originalModuleConfig=engine.config.getModuleConfig.bind(engine.config);
+engine.config.getModuleConfig=(loadPath,response)=>{
+ const config=originalModuleConfig(loadPath,response);
+ const originalLocate=config.locateFile;
+ config.locateFile=path=>path.endsWith('.audio.position.worklet.js')?'6-index.audio.position.worklet.js':path.endsWith('.audio.worklet.js')?'5-index.audio.worklet.js':originalLocate(path);
+ return config;
+};
+engine.startGame().then(()=>{document.getElementById('loading').remove();document.getElementById('canvas').focus({preventScroll:true});}).catch(error=>{statusNode.textContent='Could not load. Try opening this link in Chrome and reload.';document.getElementById('retry').style.display='block';console.error(error);});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+</script></body></html>
